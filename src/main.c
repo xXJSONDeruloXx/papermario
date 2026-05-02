@@ -37,6 +37,15 @@ static s32 pmpc_env_flag(const char* name) {
 
     return value != nullptr && value[0] != '\0' && value[0] != '0';
 }
+
+static u32 pmpc_env_u32(const char* name) {
+    const char* value = getenv(name);
+
+    if (value == nullptr || value[0] == '\0') {
+        return 0;
+    }
+    return (u32) atoi(value);
+}
 #endif
 
 enum {
@@ -115,10 +124,21 @@ void boot_main(void* data) {
 #ifdef PORT
     fprintf(stderr, "[PC] boot_main post-init checkpoint reached\n");
     fflush(stderr);
-    if (pmpc_env_flag("PMPC_RUN_ONE_RETRACE")) {
-        fprintf(stderr, "[PC] PMPC_RUN_ONE_RETRACE requested; running one retrace callback\n");
-        fflush(stderr);
-        pmpc_nusys_run_retrace_once(0);
+    {
+        u32 retraceCount = pmpc_env_u32("PMPC_RETRACE_COUNT");
+
+        if (retraceCount == 0 && pmpc_env_flag("PMPC_RUN_ONE_RETRACE")) {
+            retraceCount = 1;
+        }
+        if (retraceCount > 0) {
+            u32 i;
+
+            fprintf(stderr, "[PC] retrace smoke requested; running %u retrace callback(s)\n", retraceCount);
+            fflush(stderr);
+            for (i = 0; i < retraceCount; i++) {
+                pmpc_nusys_run_retrace_once(i);
+            }
+        }
     }
     if (pmpc_env_flag("PMPC_EXIT_AFTER_BOOT")) {
         fprintf(stderr, "[PC] PMPC_EXIT_AFTER_BOOT requested; returning from boot_main\n");
