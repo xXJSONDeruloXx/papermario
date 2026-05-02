@@ -1,6 +1,11 @@
 #include "common.h"
 #include "nu/nusys.h"
 
+#ifdef PORT
+#include <stdio.h>
+#include <stdlib.h>
+#endif
+
 // TODO move these somewhere else...
 u8 nuYieldBuf[NU_GFX_YIELD_BUF_SIZE] ALIGNED(16);
 OSThread __osThreadSave;
@@ -23,6 +28,14 @@ void gfx_init_state(void);
 
 void create_audio_system(void);
 void load_engine_data(void);
+
+#ifdef PORT
+static s32 pmpc_should_exit_after_boot(void) {
+    const char* value = getenv("PMPC_EXIT_AFTER_BOOT");
+
+    return value != nullptr && value[0] != '\0' && value[0] != '0';
+}
+#endif
 
 enum {
     RESET_STATE_NONE    = 0,
@@ -96,6 +109,16 @@ void boot_main(void* data) {
     nuGfxPreNMIFuncSet(gfxPreNMI_Callback);
     gRandSeed += osGetCount();
     nuGfxDisplayOn();
+
+#ifdef PORT
+    fprintf(stderr, "[PC] boot_main post-init checkpoint reached\n");
+    fflush(stderr);
+    if (pmpc_should_exit_after_boot()) {
+        fprintf(stderr, "[PC] PMPC_EXIT_AFTER_BOOT requested; returning from boot_main\n");
+        fflush(stderr);
+        return;
+    }
+#endif
 
     while (true) {}
 }
