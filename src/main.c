@@ -30,8 +30,10 @@ void create_audio_system(void);
 void load_engine_data(void);
 
 #ifdef PORT
-static s32 pmpc_should_exit_after_boot(void) {
-    const char* value = getenv("PMPC_EXIT_AFTER_BOOT");
+void pmpc_nusys_run_retrace_once(u32 gfxTaskNum);
+
+static s32 pmpc_env_flag(const char* name) {
+    const char* value = getenv(name);
 
     return value != nullptr && value[0] != '\0' && value[0] != '0';
 }
@@ -113,7 +115,12 @@ void boot_main(void* data) {
 #ifdef PORT
     fprintf(stderr, "[PC] boot_main post-init checkpoint reached\n");
     fflush(stderr);
-    if (pmpc_should_exit_after_boot()) {
+    if (pmpc_env_flag("PMPC_RUN_ONE_RETRACE")) {
+        fprintf(stderr, "[PC] PMPC_RUN_ONE_RETRACE requested; running one retrace callback\n");
+        fflush(stderr);
+        pmpc_nusys_run_retrace_once(0);
+    }
+    if (pmpc_env_flag("PMPC_EXIT_AFTER_BOOT")) {
         fprintf(stderr, "[PC] PMPC_EXIT_AFTER_BOOT requested; returning from boot_main\n");
         fflush(stderr);
         return;
