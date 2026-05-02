@@ -501,12 +501,17 @@ def build_npc_sprites(sprite_order: List[str], build_dir: Path) -> bytes:
     list_bytes: bytes = struct.pack(">I", yay0_cur_offset)
 
     for sprite_name in sprite_order:
-        with open(build_dir / "npc" / f"{sprite_name}.Yay0", "rb") as f:
-            yay0_bytes = f.read()
+        yay0_path = build_dir / "npc" / f"{sprite_name}.Yay0"
+        try:
+            with open(yay0_path, "rb") as f:
+                yay0_bytes = f.read()
 
             # Add 0s to pad to 0x8
             yay0_bytes_len = (len(yay0_bytes) + 0x7) & ~0x7
             yay0_bytes += b"\0" * (yay0_bytes_len - len(yay0_bytes))
+        except FileNotFoundError:
+            print(f"warning: NPC yay0 file not found: {yay0_path} -- inserting empty placeholder")
+            yay0_bytes = b""  # placeholder empty entry
 
         compressed_sprite_bytes += yay0_bytes
         yay0_cur_offset += len(yay0_bytes)

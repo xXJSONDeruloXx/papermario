@@ -53,7 +53,14 @@
 #define FLOAT_TO_FIXED(x) (((x) * 1024.0f) + -EVT_FIXED_OFFSET)
 
 // TODO(C23): use _Generic to convert float/double to fixed automatically
+#ifdef PORT
+// In PORT mode, replace function pointer casts with 0 to avoid
+// 'initializer element is not a compile-time constant' errors.
+// The actual function pointers will need to be set at runtime.
+#define BYTECODE_CAST(x) ((Bytecode)0)
+#else
 #define BYTECODE_CAST(x) ((Bytecode)(x))
+#endif
 
 // Utility macros used by EVT_CMD to BYTECODE_CAST all arguments
 #define EXPAND(x) x

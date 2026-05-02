@@ -77,8 +77,8 @@ void create_audio_system(void) {
         nuAuTasks[i].list.t.ucode_data_size = SP_UCODE_DATA_SIZE;
         nuAuTasks[i].list.t.dram_stack = nullptr;
         nuAuTasks[i].list.t.dram_stack_size = 0;
-        nuAuTasks[i].list.t.output_buff = nullptr;
-        nuAuTasks[i].list.t.output_buff_size = 0;
+        nuAuTasks[i].list.t.output_buffer = nullptr;
+        nuAuTasks[i].list.t.output_buffer_size = 0;
         nuAuTasks[i].list.t.yield_data_ptr = nullptr;
         nuAuTasks[i].list.t.yield_data_size = 0;
     }

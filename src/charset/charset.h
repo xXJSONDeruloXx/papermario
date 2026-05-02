@@ -2,6 +2,9 @@
 
 #include "charset/peach_letter.png.h"
 
+/* Declared by asset split; stubbed for host builds to allow compilation. */
+extern unsigned char charset_ROM_START[];
+
 #if VERSION_JP
 extern unsigned char charset_kana_OFFSET[];
 extern unsigned char charset_latin_OFFSET[];

@@ -18,7 +18,13 @@
 #define MATCHING_BSS(size) static BSS u8 padding_bss[size];
 #endif
 
+#ifdef PORT
+/* On host platforms, avoid putting data in ELF .bss section; BSS becomes empty
+   so decomp structs are normal host globals. */
+#define BSS
+#else
 #define BSS __attribute__ ((nocommon, section (".bss")))
+#endif
 #define TRANSPARENT_UNION __attribute__ ((__transparent_union__))
 #else
 #define SHIFT_BSS static
@@ -544,7 +550,7 @@ typedef s32 Difficulty2D[AC_DIFFICULTY_LEN][2];
 #define DT (1.0)
 #endif
 
-#define DMA_COPY_SEGMENT(segment) dma_copy(segment##_ROM_START, segment##_ROM_END, segment##_VRAM)
+#define DMA_COPY_SEGMENT(segment) ((void)0)  // Stubbed for PC port - assets loaded via libultraship
 
 #if defined(OLD_GCC) || __STDC_VERSION__ < 202311L
 typedef enum {
