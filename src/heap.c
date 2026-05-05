@@ -1,10 +1,20 @@
 #include "common.h"
+#include <stdio.h>
 
 extern HeapNode heap_generalHead;
 extern HeapNode heap_collisionHead;
 
 HeapNode* general_heap_create(void) {
-    return _heap_create(&heap_generalHead, GENERAL_HEAP_SIZE);
+#ifdef PORT
+    fprintf(stderr, "[DECOMP] general_heap_create() called\n");
+    fflush(stderr);
+#endif
+    HeapNode* result = _heap_create(&heap_generalHead, GENERAL_HEAP_SIZE);
+#ifdef PORT
+    fprintf(stderr, "[DECOMP] general_heap_create() returned %p\n", result);
+    fflush(stderr);
+#endif
+    return result;
 }
 
 void* general_heap_malloc(s32 size) {
@@ -32,6 +42,10 @@ s32 func_8002ACDC(void) {
 }
 
 void* heap_malloc(s32 size) {
+#ifdef PORT
+    fprintf(stderr, "[DECOMP] heap_malloc(%d) gGameStatusPtr=%p context=%d\n", size, (void*)gGameStatusPtr, gGameStatusPtr ? gGameStatusPtr->context : -1);
+    fflush(stderr);
+#endif
     if (gGameStatusPtr->context == CONTEXT_WORLD) {
         return general_heap_malloc(size);
     } else {

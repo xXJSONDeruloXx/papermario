@@ -1,3 +1,6 @@
+// Explicit prototype for sound effect playback used inside entity.c
+void sfx_play_sound(s32 soundID);
+
 #include "common.h"
 #include "ld_addrs.h"
 #include "entity.h"

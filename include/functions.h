@@ -100,6 +100,12 @@ void clear_windows(void);
 void update_window_hierarchy(s32 windowIndex, u8 arg1);
 void get_msg_properties(s32 msgID, s32* height, s32* width, s32* maxLineChars, s32* numLines, s32* maxLinesPerPage, s32* arg6, u16 charset);
 void replace_window_update(s32 idx, s8 arg1, WindowUpdateFunc pendingFunc);
+// Sound effect playback
+// The original ROM uses an implicit function declaration for sfx_play_sound.
+// Adding an explicit prototype prevents warnings and makes the API clear.
+void sfx_play_sound(s32 soundID);  // defined in src/effect_shims.c
+
+// Yay0 decompression (assembly in src/os/decode_yay0.s)
 void decode_yay0(void* src, void* dst);
 
 s32 ai_check_player_dist(Enemy* enemy, s32 arg1, f32 arg2, f32 arg3);
